@@ -231,6 +231,17 @@ abstract class USPSBase
     abstract public function getPostFields();
 
     /**
+     * Set a single root-level field for the XML request.
+     * 
+     * @param string|int $key
+     * @param string|int $value
+     */
+    public function setPostField($key, $value)
+    {
+        $this->postFields[ucwords($key)] = $value;
+    }
+
+    /**
      * Return the xml string built that we are about to send over to the api.
      *
      * @return string
@@ -238,12 +249,12 @@ abstract class USPSBase
     protected function getXMLString()
     {
         // Add in the defaults
-        $postFields = [
+        $defaultPostFields = [
             '@attributes' => ['USERID' => $this->username],
         ];
 
         // Add in the sub class data
-        $postFields = array_merge($postFields, $this->getPostFields());
+        $postFields = array_merge($defaultPostFields, $this->postFields, $this->getPostFields());
 
         $xml = XMLParser::createXML($this->apiCodes[$this->apiVersion], $postFields);
 
